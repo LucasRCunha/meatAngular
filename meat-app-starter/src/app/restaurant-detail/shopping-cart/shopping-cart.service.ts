@@ -17,6 +17,17 @@ export class ShoppingCartService{
         }
     }
 
+    increaseQty(item: CartItem){
+        item.quantity = item.quantity + 1
+    }
+
+    decreaseQty(item: CartItem){
+        item.quantity = item.quantity - 1
+        if(item.quantity===0){
+            this.removeItem(item)
+        }
+    }
+
     removeItem(item: any){
         this.items.splice(this.items.indexOf(item), 1)
     }
