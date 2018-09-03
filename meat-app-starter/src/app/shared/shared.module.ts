@@ -13,12 +13,12 @@ import {RestaurantsService} from '../restaurants/restaurants.service'
     exports: [InputComponent, RadioComponent,
         RatingComponent, CommonModule,
         FormsModule, ReactiveFormsModule ]
-    })
-    export class SharedModule {
-        static forRoot(): ModuleWithProviders {
-            return {
-                ngModule: SharedModule,
-                providers:[ShoppingCartService, RestaurantsService, OrderService]
-            }
+})
+export class SharedModule {
+    static forRoot(): ModuleWithProviders {
+        return {
+            ngModule: SharedModule,
+            providers:[ShoppingCartService, RestaurantsService, OrderService]
         }
     }
+}
