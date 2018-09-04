@@ -30,31 +30,35 @@ import {Observable} from 'rxjs/Observable'
   ]
 })
 export class RestaurantsComponent implements OnInit {
-
+  
   restaurants: Restaurant[]
   searchBarState = 'hidden'
   searchForm: FormGroup
   searchControl: FormControl
-
+  
   constructor(private restaurantsService: RestaurantsService,
-              private fb: FormBuilder) { }
-
+    private fb: FormBuilder) { }
+    
   ngOnInit() {
-    this.searchControl = this.fb.control('')
-    this.searchForm = this.fb.group({
-      searchControl: this.searchControl
-    })
-     this.searchControl.valueChanges
-        .switchMap(searchTerm =>
-          this.restaurantsService.restaurants(searchTerm))
+      this.searchControl = this.fb.control('')
+      this.searchForm = this.fb.group({
+        searchControl: this.searchControl
+      })
+      this.searchControl.valueChanges
+      .debounceTime(500)
+      .distinctUntilChanged()
+      .switchMap(searchTerm =>
+        this.restaurantsService
+        .restaurants(searchTerm)
+        .catch(error=>Observable.from([])))
         .subscribe(restaurants => this.restaurants = restaurants)
-
-    this.restaurantsService.restaurants()
-      .subscribe(restaurants => this.restaurants = restaurants)
+        
+        this.restaurantsService.restaurants()
+        .subscribe(restaurants => this.restaurants = restaurants)
   }
-
+      
   toggleSearch(){
     this.searchBarState = this.searchBarState === 'hidden' ? 'visible' : 'hidden'
   }
-
+      
 }
