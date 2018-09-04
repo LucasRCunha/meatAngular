@@ -3,6 +3,13 @@ import { Restaurant } from './restaurant/restaurant.model';
 import { RestaurantsService } from './restaurants.service';
 import {trigger, state, style, transition, animate} from '@angular/animations'
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms'
+import 'rxjs/add/operator/switchMap'
+import 'rxjs/add/operator/do'
+import 'rxjs/add/operator/debounceTime'
+import 'rxjs/add/operator/distinctUntilChanged'
+import 'rxjs/add/operator/catch'
+import 'rxjs/add/observable/from'
+import {Observable} from 'rxjs/Observable'
 
 @Component({
   selector: 'mt-restaurants',
@@ -26,14 +33,26 @@ export class RestaurantsComponent implements OnInit {
 
   restaurants: Restaurant[]
   searchBarState = 'hidden'
+  searchForm: FormGroup
+  searchControl: FormControl
 
-  constructor(private restaurantsService: RestaurantsService) { }
+  constructor(private restaurantsService: RestaurantsService,
+              private fb: FormBuilder) { }
 
   ngOnInit() {
+    this.searchControl = this.fb.control('')
+    this.searchForm = this.fb.group({
+      searchControl: this.searchControl
+    })
+     this.searchControl.valueChanges
+        .switchMap(searchTerm =>
+          this.restaurantsService.restaurants(searchTerm))
+        .subscribe(restaurants => this.restaurants = restaurants)
+
     this.restaurantsService.restaurants()
       .subscribe(restaurants => this.restaurants = restaurants)
   }
-  
+
   toggleSearch(){
     this.searchBarState = this.searchBarState === 'hidden' ? 'visible' : 'hidden'
   }
